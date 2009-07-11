@@ -1,0 +1,18 @@
+digraph controllers_diagram {
+	graph[overlap=false, splines=true]
+	"BugsController" [shape=Mrecord, label="{BugsController|create\ldestroy\ledit\lindex\lnew\lshow\lupdate\l|\l|prevent_access\l}"]
+	"HelloController" [shape=Mrecord, label="{HelloController|sayhello\l|\l|\l}"]
+	"ProjectsController" [shape=Mrecord, label="{ProjectsController|create\ldestroy\ledit\lindex\lnew\lshow\lupdate\l|\l|prevent_access\l}"]
+	"RepositoriesController" [shape=Mrecord, label="{RepositoriesController|create\ldestroy\ledit\lindex\lnew\lshow\lupdate\l|\l|prevent_access\l}"]
+	"SchemaBrowserController" [shape=Mrecord, label="{SchemaBrowserController|schema\l|\l|\l}"]
+	"SessionsController" [shape=Mrecord, label="{SessionsController|create\ldestroy\lnew\l|\l|\l}"]
+	"UsersController" [shape=Mrecord, label="{UsersController|create\lnew\l|\l|\l}"]
+	"ApplicationController" [shape=Mrecord, label="{ApplicationController|\l|\l|\l}"]
+	"ApplicationController" -> "BugsController" [label="", arrowhead="none", arrowtail="onormal"]
+	"ApplicationController" -> "HelloController" [label="", arrowhead="none", arrowtail="onormal"]
+	"ApplicationController" -> "ProjectsController" [label="", arrowhead="none", arrowtail="onormal"]
+	"ApplicationController" -> "RepositoriesController" [label="", arrowhead="none", arrowtail="onormal"]
+	"ApplicationController" -> "SchemaBrowserController" [label="", arrowhead="none", arrowtail="onormal"]
+	"ApplicationController" -> "SessionsController" [label="", arrowhead="none", arrowtail="onormal"]
+	"ApplicationController" -> "UsersController" [label="", arrowhead="none", arrowtail="onormal"]
+}

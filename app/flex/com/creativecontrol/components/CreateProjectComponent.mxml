@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Create a New Project">
+
+<!--	The MetaData is added so that this Component may be declared, so that this may be handled in a loosely-coupled architecture (as all enterprise applications should)-->
+
+	<mx:Metadata>
+	
+			[Event(name="createProject", type="com.creativecontrol.events.EventProject")]	
+		
+	</mx:Metadata>
+
+
+<mx:Script>
+	
+  <![CDATA[
+  
+  			       
+  			      
+				
+  
+  
+	
+					import mx.rpc.events.ResultEvent;
+					
+					import com.creativecontrol.events.EventProject;
+					
+					
+					
+					private function  createProjectResultHandler(event:ResultEvent):void {	
+						
+						var xmlResult:XML = XML(event.result);
+						
+						dispatchEvent(new EventProject(EventProject.CREATE_PROJECT, xmlResult));
+						
+					}
+				
+					private function createTheProject():void {
+							
+							createProjectsService.send();
+							
+						}
+						
+		
+		
+	]]>
+</mx:Script>
+
+
+<!--  This is a Web Service Declaration(not Definition) named createProjectsService (named accordingly).  This Service "POSTs" XML data and "requests" XML data with an .xml extension
+   to and from the ProjectsController in app/controllers directory on the Rails side of things.  The Service is called when the createTheProject function is executed (it is attached to the
+   Enter Button (so it acts as an addEventListener property (it broadcasts the Click Event of type MOUSE.CLICK.  The response of the Service includes the calling of the createProjectResultHandler
+   Event Handler, that dispatches ( creates an EventDispatcher Object) a new EventProject dataTyped as CREATE_PROJECT (refer to the EventProject.as file for the complete  implementation.-->
+
+		<mx:HTTPService id="createProjectsService" url="/projects.xml" resultFormat="e4x" contentType="application/xml" result=" createProjectResultHandler(event)" >
+			
+			<mx:request>
+				
+				<project>
+				
+				<name>{nameInput.text}</name>
+			    <details>{detailsInput.text}</details>
+			    
+				</project>
+				
+			</mx:request>
+			
+		</mx:HTTPService>
+		
+		
+		
+<mx:Form width="100%" height="100%">
+
+<mx:FormItem label="Name">
+
+<mx:TextInput id="nameInput" width="200"/>
+
+</mx:FormItem>
+
+<mx:FormItem label="Project Details">
+
+<mx:TextArea id="detailsInput" width="200" height="100"/>
+
+</mx:FormItem>
+
+<mx:FormItem>
+
+<mx:Button label="Enter" width="160" height="30" click="createTheProject()"/>
+
+</mx:FormItem>
+
+</mx:Form>
+
+</mx:VBox>

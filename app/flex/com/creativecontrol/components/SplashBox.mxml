@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:control="com.creativecontrol.components.*" horizontalAlign="center" verticalAlign="top" width="100%" height="100%">
+
+	/** This component is really just a copy and paste of the main application file - Tracker.mxml **/
+
+	
+	/** Metadata declaration -
+		  @ This metadata declares that 2 events are being broadcasted.
+		  @ accountCreate & login - Events are being declared by this metadata.
+		  @ These events are not being handled on the control:AccountRegistration and AreaLogin,
+      		  since a new event would have to be dispatched to be handled by the Tracker.mxml main application file.
+			 Note: If an event had been created like displayMainComponent etc, information would be lost and the ability to create custom actions in response to these specific events.
+		**/
+
+
+			 
+<mx:Metadata>
+    [Event(name="accountCreate", type="com.creativecontrol.events.CreateAccountEvent")]
+    [Event(name="login", type="com.creativecontrol.events.EventLogin")]
+</mx:Metadata>
+
+<mx:Script>
+
+<![CDATA[
+    import com.creativecontrol.events.CreateAccountEvent;
+    import com.creativecontrol.events.EventLogin;
+
+    [Bindable]
+    private var _articles:String = "This Rich Internet Application was created by Jarrod Dane for Creative Control Interactive in association with JD Studios.  The whole purpose of this project is to showcase the capabilities of Flex 3 riding on top of Ruby on Rails 2.0.2.  The stable release version of Rails at the time opf this project is 1.9.0, yet we wanted to push the limits by utilizing the newest assets included with the latest version.";
+
+]]>
+
+</mx:Script>
+    <mx:VBox width="500" horizontalAlign="center">
+        <mx:Image source="com/control/assets/creative_control.jpg" />
+        <mx:Label text="A complex web application built by the one and only Jarrod Dane."/>
+        <mx:Spacer height="10"/>
+        <mx:Text width="100%" text="{_articles}"/>
+        <mx:Spacer height="10"/>
+        <mx:Accordion width="400" height="300">
+            <control:AccountRegistration/>
+            <control:AreaLogin/>
+        </mx:Accordion>
+        <mx:Label text="You are not who you are, if you are not who you seem to be !"/>        
+    </mx:VBox>
+</mx:VBox>

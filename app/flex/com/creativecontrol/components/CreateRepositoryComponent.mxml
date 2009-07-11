@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Create a New Repository">
+
+
+	<mx:Metadata>
+		
+		[Event(name="createRepository", type="com.creativecontrol.events.EventRepository")]
+		
+		
+	</mx:Metadata>
+
+
+<mx:Script>
+	
+	<![CDATA[
+		
+			import mx.rpc.events.ResultEvent;
+			import com.creativecontrol.events.EventRepository;
+			
+			
+			
+			private function createRepositoryResultHandler(event:ResultEvent):void {
+				
+				var xmlResult:XML = XML(event.result);
+				
+				dispatchEvent(new EventRepository(EventRepository.CREATE_REPOSITORY, xmlResult));
+				
+				
+			}
+		
+		
+		    private function createTheRepository():void {
+			
+				repositoryServiceCreate.send();	
+			
+		     }
+		
+		
+	]]>
+</mx:Script>
+
+	<mx:HTTPService id="repositoryServiceCreate" url="/repositories.xml" resultFormat="e4x" contentType="application/xml" method="POST" result="createRepositoryResultHandler(event)">
+
+	<mx:request>
+		
+		<repository>
+			
+			<name>{nameInput.text}</name>
+			<details>{notessInput.text}</details>
+		
+		</repository>
+		
+	</mx:request>
+
+
+	</mx:HTTPService>
+	
+	
+
+<mx:Form width="100%" height="100%">
+
+<mx:FormItem label="Repository">
+
+<mx:TextInput id="nameInput" width="200"/>
+
+</mx:FormItem>
+
+<mx:FormItem label="Details">
+
+<mx:TextInput id="detailsInput" width="200"/>
+
+</mx:FormItem>
+
+<mx:FormItem>
+
+<mx:Button label="Enter" width="160" height="30" click="createTheRepository()"/>
+
+</mx:FormItem>
+
+</mx:Form>
+
+</mx:VBox>

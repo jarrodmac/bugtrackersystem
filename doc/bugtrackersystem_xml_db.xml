@@ -1,0 +1,212 @@
+<?xml version="1.0" ?>
+<!-- WWWSQLEditor XML export -->
+<sql>
+	<table id="1" title="bugs" x="10" y="110" >
+		<row id="1" pk="pk" index="index">
+			<title>id</title>
+			<default></default>
+			<type>Integer</type>
+		</row>
+		<row id="2" fk="fk">
+			<title>user_id</title>
+			<default></default>
+			<type>Integer</type>
+		</row>
+		<row id="3" fk="fk">
+			<title>project_id</title>
+			<default></default>
+			<type>Integer</type>
+		</row>
+		<row id="4" fk="fk">
+			<title>repository_id</title>
+			<default></default>
+			<type>Integer</type>
+		</row>
+		<row id="5" special="">
+			<title>name</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="6">
+			<title>details</title>
+			<default></default>
+			<type>Text</type>
+		</row>
+		<row id="7">
+			<title>next_release</title>
+			<default></default>
+			<type>Timestamp</type>
+		</row>
+		<row id="8">
+			<title>finished</title>
+			<default></default>
+			<type>Timestamp</type>
+		</row>
+		<row id="9">
+			<title>created_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+		<row id="10">
+			<title>updated_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+	</table>
+	<table id="2" title="projects" x="204" y="110" >
+		<row id="11" pk="pk" index="index">
+			<title>id</title>
+			<default></default>
+			<type>Integer</type>
+		</row>
+		<row id="12" fk="fk">
+			<title>user_id</title>
+			<default>0</default>
+			<type>Integer</type>
+		</row>
+		<row id="13" special="">
+			<title>name</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="14">
+			<title>details</title>
+			<default></default>
+			<type>Text</type>
+		</row>
+		<row id="15">
+			<title>finished</title>
+			<default>false</default>
+			<type>Timestamp</type>
+		</row>
+		<row id="16">
+			<title>created_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+		<row id="17">
+			<title>updated_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+	</table>
+	<table id="3" title="repositories" x="374" y="110" >
+		<row id="18" pk="pk" index="index">
+			<title>id</title>
+			<default></default>
+			<type>Integer</type>
+		</row>
+		<row id="19" fk="fk">
+			<title>user_id</title>
+			<default>0</default>
+			<type>Integer</type>
+		</row>
+		<row id="20" special="">
+			<title>name</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="21">
+			<title>details</title>
+			<default></default>
+			<type>Text</type>
+		</row>
+		<row id="22">
+			<title>created_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+		<row id="23">
+			<title>updated_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+	</table>
+	<table id="4" title="users" x="560" y="110" >
+		<row id="24" pk="pk" index="index">
+			<title>id</title>
+			<default></default>
+			<type>Integer</type>
+		</row>
+		<row id="25" special="">
+			<title>login</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="26" special="">
+			<title>email</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="27" special="">
+			<title>first_name</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="28" special="">
+			<title>last_name</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="29" special="">
+			<title>crypted_password</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="30" special="">
+			<title>salt</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="31">
+			<title>created_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+		<row id="32">
+			<title>updated_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+		<row id="33" special="">
+			<title>remember_token</title>
+			<default></default>
+			<type>String</type>
+		</row>
+		<row id="34">
+			<title>remember_token_expires_at</title>
+			<default></default>
+			<type>Datetime</type>
+		</row>
+	</table>
+	<relation>
+		<table_1>1</table_1>
+		<row_1>2</row_1>
+		<table_2>4</table_2>
+		<row_2>24</row_2>
+	</relation>
+	<relation>
+		<table_1>1</table_1>
+		<row_1>4</row_1>
+		<table_2>3</table_2>
+		<row_2>18</row_2>
+	</relation>
+	<relation>
+		<table_1>1</table_1>
+		<row_1>3</row_1>
+		<table_2>2</table_2>
+		<row_2>11</row_2>
+	</relation>
+	<relation>
+		<table_1>2</table_1>
+		<row_1>12</row_1>
+		<table_2>4</table_2>
+		<row_2>24</row_2>
+	</relation>
+	<relation>
+		<table_1>3</table_1>
+		<row_1>19</row_1>
+		<table_2>4</table_2>
+		<row_2>24</row_2>
+	</relation>
+</sql>

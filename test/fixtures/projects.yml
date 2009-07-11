@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 3
+  name: Test
+  details: MyText
+  finished: false
+
+two:
+  user_id: 3
+  name: Production
+  details: MyText
+  finished: true

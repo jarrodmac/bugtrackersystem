@@ -1,0 +1,29 @@
+<h1>Listing projects</h1>
+
+<div id="wrapper-table">
+<table align="center">
+  <tr>
+    <th>User</th>
+    <th>Name</th>
+    <th>Details</th>
+    <th>Finished</th>
+  </tr>
+
+<% for project in @projects %>
+
+  <tr>
+    <td><%=h project.user_id %></td>
+    <td><%=h project.name %></td>
+    <td><%=h project.details %></td>
+    <td><%=h project.finished %></td>
+    <td><%= link_to 'Show', project %></td>
+    <td><%= link_to 'Edit', edit_project_path(project) %></td>
+    <td><%= link_to 'Destroy', project, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+ 
+<% end %>
+</table>
+</div>
+<br />
+
+<%= link_to 'New project', new_project_path %>

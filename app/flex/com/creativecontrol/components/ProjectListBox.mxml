@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Projects">
+
+<mx:Metadata>
+	
+	[Event(name="updateProject", type="com.creativecontrol.events.EventProject")]
+	
+	[Event(name="deleteProject", type="com.creativecontrol.events.EventProject")]
+	
+	
+</mx:Metadata>
+
+
+<mx:Script>
+
+
+	<![CDATA[
+		
+		
+				import mx.controls.Alert;
+				import mx.collections.XMLListCollection;
+				import mx.rpc.events.ResultEvent;
+				import com.creativecontrol.events.EventProject;
+				import com.creativecontrol.utilities.utilitiesXML;
+				
+				
+			 [Bindable]
+				
+				public var projectsXMLListCollection:XMLListCollection; 
+					
+		
+				public function selectedProjectUpdate():void {
+					
+					
+					var projectSelection:XML = XML(projectsGrid.selectedItem);
+					
+					var params:Object = new Object();
+					params['project[name]'] = nameInput.text;
+					params['project[finished]'] = finishedCheckBox.selected;
+					params['project[details]'] = nameInput.text;
+					params['_method'] = "PUT";
+					projectsUpdateService.url = "/projects/" + projectSelection.id + ".xml";
+					projectsUpdateService.send(params);
+					
+				}
+				
+				
+				public function projectUpdateFinished(project:XML, finished:Boolean):void {
+					
+					
+					var params:Object = new Object();
+					params['project[finished]'] = finished;
+					params['_method'] = "PUT";
+					projectsUpdateService.url = "/projects/" + project.id + ".xml";
+					projectsUpdateService.send(params);
+				
+					
+					
+				}
+				
+				
+				public function projectDelete(data:Object):void {
+					
+					
+					projectsDeleteService.url = "/projects/" + data.id + ".xml";
+					projectsDeleteService.send({_method:"DELETE"});	
+					
+					
+				}
+				
+				
+				private function projectsUpdateResultHandler(event:ResultEvent):void {
+					
+					dispatchEvent(new EventProject(EventProject.UPDATE_PROJECT, XML(event.result)));
+					
+					
+				}
+				
+				
+				private function projectsDeleteResultHandler(event:ResultEvent):void {
+					
+					
+					if (event.result == "error") {
+						
+						
+						
+						Alert.show("The system has encountered an error when trying to delete the project.", "Error");
+				
+					} else {
+						
+						dispatchEvent(new EventProject(EventProject.DELETE_PROJECT, XML(event.result)));
+						
+					}
+					
+				}
+				
+				
+				
+		
+		
+		
+	]]>
+</mx:Script>
+
+
+<mx:HTTPService id="projectsUpdateService" resultFormat="e4x" method="POST" result="projectsUpdateResultHandler(event)"/>
+
+<mx:HTTPService id="projectsDeleteService" resultFormat="e4x" method="POST"  result="projectsDeleteResultHandler(event)"/>
+
+
+<mx:Panel id="summaryPanel" title="Project" width="100%" height="40%" paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="5">
+
+<mx:HBox width="100%">
+
+<mx:Label text="Name" width="50"/>
+
+<mx:TextInput id="nameInput" width="100%" text="{projectsGrid.selectedItem.name}"/>
+
+<mx:CheckBox id="finishedCheckBox" label="Finished" selected="{utilitiesXML.toBooleanXMLList(projectsGrid.selectedItem.finished)}"/>
+
+</mx:HBox>
+
+
+
+<mx:HBox width="100%" height="100%">
+
+<mx:Label text="Details" width="50"/>
+
+<mx:TextArea id="detailsInput" width="100%" height="100%" text="{projectsGrid.selectedItem.details}"/>
+
+</mx:HBox>
+
+
+<mx:ControlBar width="100%" horizontalAlign="center">
+
+<mx:Button id="btnUpdate" label="Update" width="84" height="30"  labelPlacement="left" textAlign="center" click="selectedProjectUpdate()" enabled="{projectsGrid.selectedItem != null}"/>
+
+<mx:Button id="btnDelete" label="Erase" height="30" click="projectDelete(XML(projectsGrid.selectedItem))" enabled="{projectsGrid.selectedItem != null}"/>
+
+</mx:ControlBar>
+
+</mx:Panel>
+
+
+<mx:DataGrid id="projectsGrid" width="100%" height="60%" dataProvider="{projectsXMLListCollection}">
+
+<mx:columns>
+
+
+<mx:DataGridColumn headerText="Finished" width="60" dataField="finished" editable="false">
+
+<mx:itemRenderer>
+	
+	<mx:Component>
+		
+		<mx:HBox width="25" paddingLeft="5">
+			
+			
+			<mx:Script>
+				<![CDATA[
+					
+					
+					import com.creativecontrol.utilities.utilitiesXML;
+					
+					
+					private function finishedUpdating():void {
+						
+						
+						outerDocument.projectUpdateFinished(XML(data), !utilitiesXML.toBooleanXMLList(data.finished));
+						
+						
+						
+					}
+					
+					
+	
+					
+				]]>
+			</mx:Script>
+	
+	
+        <mx:CheckBox selected="{utilitiesXML.toBooleanXMLList(data.finished)}" click="finishedUpdating()"/>	
+	
+			
+			
+		</mx:HBox>
+		
+		
+		
+	</mx:Component>
+	
+	
+</mx:itemRenderer>
+
+</mx:DataGridColumn>
+
+<mx:DataGridColumn headerText="Name of the Project" width="250" dataField="name"/>
+
+<mx:DataGridColumn headerText="Details" width="150" dataField="details"/>
+
+
+<mx:DataGridColumn headerText="" width="80" editable="false">
+	
+	
+	
+	<mx:itemRenderer>
+		
+		
+		<mx:Component>
+			
+			
+			
+			<mx:Button label="Erase" click="outerDocument.projectDelete(XML(data))"/>
+			
+			
+		</mx:Component>
+		
+		
+	</mx:itemRenderer>
+	
+	
+</mx:DataGridColumn>
+
+<mx:DataGridColumn headerText="Project ID" width="150" dataField="project_id"/>
+
+<mx:DataGridColumn headerText="The Project's Repository" dataField="repository_id"/>
+
+<mx:DataGridColumn headerText="" width="60"/>
+
+</mx:columns>
+
+</mx:DataGrid>
+
+
+
+
+
+</mx:VDividedBox>

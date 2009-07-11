@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 3
+  name: jarrod
+  details: SVN A
+
+two:
+  user_id: 3
+  name: jarrod
+  details: SVN B
+  
+

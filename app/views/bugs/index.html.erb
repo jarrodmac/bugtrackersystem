@@ -1,0 +1,32 @@
+<h1>Listing bugs</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Project</th>
+    <th>Repository</th>
+    <th>Name</th>
+    <th>Details</th>
+    <th>Next release</th>
+    <th>Finished</th>
+  </tr>
+
+<% for bug in @bugs %>
+  <tr>
+    <td><%=h bug.user_id %></td>
+    <td><%=h bug.project_id %></td>
+    <td><%=h bug.repository_id %></td>
+    <td><%=h bug.name %></td>
+    <td><%=h bug.details %></td>
+    <td><%=h bug.next_release %></td>
+    <td><%=h bug.finished %></td>
+    <td><%= link_to 'Show', bug %></td>
+    <td><%= link_to 'Edit', edit_bug_path(bug) %></td>
+    <td><%= link_to 'Destroy', bug, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New bug', new_bug_path %>

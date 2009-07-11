@@ -1,0 +1,476 @@
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:control="com.creativecontrol.components.*" minWidth="1000" minHeight="680" paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="5" width="100%" height="100%" backgroundColor="#FFFFFF" creationComplete="creationCompleteEventHandler()">
+	
+	<mx:Script>
+		<![CDATA[
+		
+				  import mx.controls.Alert;
+				  import mx.rpc.events.ResultEvent;
+				  import mx.collections.XMLListCollection; 
+		          import mx.collections.ArrayCollection;
+		          import mx.collections.IViewCursor;
+				  import com.creativecontrol.events.EventBug;
+				  import com.creativecontrol.components.MainContainer;
+				  import com.creativecontrol.components.*;
+		   
+			
+		/**  @ user::XML
+		 *    @ Bindable Variable Description- Rails sends back XML, so this variable must be typed as XML.
+		 *    Note:  this is the variable for the current user.
+		 * */
+					
+				[Bindable]	
+						
+				public var user:XML;
+				
+				
+				[Bindable]		
+				
+			    private var _noProjectsXMLList:XMLListCollection;
+		
+		
+				[Bindable]		
+				
+			    private var _noRepositoriesXMLList:XMLListCollection;
+			    
+			    [Bindable]
+			    
+			    private var _projectsFlagSwitch:Boolean;
+			    
+			     [Bindable]
+			    
+			    private var _repositoriesFlagSwitch:Boolean;
+			    
+			    
+			    
+			    
+			/*     These two Bindable Objects are what are known as Associative Arrays(very common in OOP Languages like C, C++, Java, Ruby etc.).  They are 'hashes', so basically
+			    what a hash means is a "barrel of Strings, Ints or any DataType", that gets recognized not by it's Index, yet by it's key/ value pair.  You can really just through whatever you want
+			    into the Array and you don't have to worry about the position or offset of the Item you are trying to refernce or use(good for some procedures/tasks, but not all). */
+			    
+			   
+			     [Bindable]
+			    
+			    private var _projectIDKeyValuePairMapping:Object;
+			    
+			     [Bindable]
+			    
+			    private var _repositoryIDKeyValuePairMapping:Object;
+			    
+			    
+			    
+			    
+			    
+			    /** @ BYPASS_CONSTANT_XML::XML - static constant(public)
+			    *    @ Details - 
+			    * */
+			    
+			    
+			    
+			    
+			    public static const BYPASS_PROJECT_XML:XML =
+			    
+			     <project><name> --No Project-- </name><id type="integer">0</id></project>
+			     
+			    
+			       /**   @ BYPASS_CONSTANT_XML::XML - static constant(public)
+			         *    @ Details - 
+			         * */
+			    
+			    public static const BYPASS_REPOSITORY_XML:XML = 
+			    
+			     <repository><name> --No Repository-- </name><id type="integer">0</id></repository>
+			     
+			     
+			     
+			     
+			     
+		
+		       /** @ listTheProjects() - function(public)
+			     *  @ null - input value or parameter
+			     *  @ void - no return value
+			     *  @ function description - this function calls the projectsServiceList.send() method.  It does not return a value, it just does what it says.
+			   **/
+
+		 		public function listTheProjects():void {
+						
+					  projectsServiceList.send();
+					
+				}
+
+
+				 
+			   /** @ listTheProjectsResultHandler() - function(private)
+			     *  @ event:ResultEvent - input value
+			     *  @ void - no return value
+			     *  @ function description - this function sets the _projectIDKeyValuePairMapping  to a true boolean value.  It also stores the result of the event as XML (in the xmlResult variable).  It then runs the  projectMappingUpdate() method.
+			   **/
+
+				private function listTheProjectsResultHandler(event:ResultEvent):void {
+					
+					  _projectIDKeyValuePairMapping = true;
+					
+					   var xmlResult:XML = XML(event.result);
+					
+					    projectMappingUpdate();
+					
+				} 
+	   
+	   
+	   
+	   
+			   /*  This listDuties function is called when the creationComplete event handler is dispatched (through the built in EventDispatcher)
+		        and the event will be broadcasted once this loosely coupled component is created.  The purpose of this function as you can see,
+		        is to call the HTTPService (web service) and 'GET' the results */
+		        
+		       
+			      
+	         /** @ listTheBugs() - function(public)
+			   *  @ null - input value or parameter
+			   *  @ void - no return value
+			   *  @ function description - this function calls the bugsListService send() method.  It does not return a value, it just does what it says.
+			  **/
+			      
+			   public function listTheBugs():void {
+				
+			       bugsListService.send();	
+				
+			   }
+			   
+			   
+			   
+			   
+			    /** @ bugsListResultHandler() - function(private)
+			     *   @ event:ResultEvent - function input parameter
+			     *   @ void - no return value
+			     *   @ function description - this function calls the bugListService send() method.  It does not return a value, it just does what it says.
+			   **/
+			   
+			   private function bugsListResultHandler(event:ResultEvent):void {
+				
+				   var xmlResult:XML = XML(event.result);
+				
+			   }
+			   
+			   
+			   
+			   
+			   /** @ listTherepositories() - function(public)
+			     *  @ null - input value or parameter
+			     *  @ void - no return value
+			     *  @ function description - this function calls the  repositoriesServiceList send() method.  It does not return a value, it just does what it says.
+			   **/
+			   
+			   public function listTheRepositories():void {
+		    				
+		    	   repositoriesServiceList.send();
+		    				
+		    			
+		    	}
+		    			
+		    			
+		    		
+		       /** @ repositoriesListResultHandler() - function(private)
+			     *  @ event:ResultEvent - input value
+			     *  @ void - no return value
+			     *  @ function description - this function sets the _repositoryIDKeyValuePairMapping  to a true boolean value.  It also stores the result of the event as XML (in the xmlResult variable).  It then runs the  repositoryMappingUpdate()() method.
+			   **/	
+		    			
+		    	private function repositoriesListResultHandler(event:ResultEvent):void {
+		    				
+		    		_repositoryIDKeyValuePairMapping = true;
+		    				
+		    		var xmlResult:XML = XML(event.result);
+		    		
+		    		repositoryMappingUpdate();
+		    				
+		    				
+		    	} 
+			 
+			 
+			 
+			  /** @ creationCompleteEventHandler() - function(private)
+			     *  @ null - input value
+			     *  @ void - no return value
+			     *  @ function descriptionA - this function sets the _projectIDKeyValuePairMapping and the _repositoryIDKeyValuePairMapping  to a falseboolean value.  It also stores the result of the event as XML (in the xmlResult variable).  It then runs the  repositoryMappingUpdate()() method.
+			     *  @ function descriptionB - It then runs the listTheProjects() and listTheRepositories() functions.
+			   **/	
+			   
+			 
+			   private function creationCompleteEventHandler():void {
+			   	
+			   	/* Erase the errorsList call and set the projects and repositories FlagSwitch to false */
+				
+					_projectIDKeyValuePairMapping = false;
+					_repositoryIDKeyValuePairMapping = false;
+					
+				/* listTheBugs(); Commented Out During Re-Factoring */
+				
+					listTheProjects();
+					listTheRepositories();
+		
+	           }
+
+
+
+			   /** @ requestEmptyRepositories() - function(private)
+			     *  @ xlRepositories:XMLList - input value
+			     *  @ XMLListCollection - return value data-type
+			     *  @ valueToReturn -  return value
+			     *  @ function descriptionA - this function creates a new XMLListCollection Object named valueToRetunr that takes xlRepositories.copy() as an input parameter.
+			     *  @ function descriptionB - It then calls addItemAt with 2 parameters (BYPASS_REPOSITORY_XML, 0)
+			   **/	
+			 
+
+			   private function requestEmptyRepositories(xlRepositories:XMLList):XMLListCollection {
+				
+				var valueToReturn:XMLListCollection = new XMLListCollection(xlRepositories.copy());
+				valueToReturn.addItemAt(BYPASS_REPOSITORY_XML, 0);
+				
+				return valueToReturn;
+				
+			  }
+			  
+			  
+			
+			   /** @ requestEmptyProjects() - function(private)
+			     *  @ xlProjects:XMLList - input value
+			     *  @ XMLListCollection - return value data-type
+			     *  @ valueToReturn -  return value
+			     *  @ function descriptionA - this function creates a new XMLListCollection Object named valueToRetun that takesxlProjects.copy() as an input parameter.
+			     *  @ function descriptionB - It then calls addItemAt with 2 parameters (BYPASS_PROJECT_XML, 0)
+			   **/
+			
+				private function requestEmptyProjects(xlProjects:XMLList):XMLListCollection {
+				
+				var valueToReturn:XMLListCollection = new XMLListCollection(xlProjects.copy());
+				valueToReturn.addItemAt(BYPASS_PROJECT_XML, 0);
+				
+				return valueToReturn;
+				
+			}
+			
+			
+			
+			    /** @  projectMappingUpdate() - function(private)
+			     *   @ null - function input parameter
+			     *   @ void - no return value
+			     *   @ function description - See Appendix I for  official documentation.
+			   **/
+			
+			private function projectMappingUpdate():void {
+				
+				_projectIDKeyValuePairMapping = {};
+				_projectIDKeyValuePairMapping [0] = BYPASS_PROJECT_XML;
+				
+				var highlightProjects:IViewCursor = projectsXMLListCollection.createCursor();
+				
+				while (!highlightProjects.afterLast) {
+					
+					var project:XML = XML(highlightProjects.current);
+					
+					_projectIDKeyValuePairMapping[project.id] = project;
+					
+					highlightProjects.moveNext();
+					
+				}
+				
+				listTheBugsWhenMappingIsAvailable();	
+					
+				}
+				
+				
+				
+		  /** @ repositoryMappingUpdate() - function(private)
+	       *   @ null - function input parameter
+	       *   @ void - no return value
+           *   @ function description - See Appendix I for  official documentation.
+	       **/		
+				
+			private function repositoryMappingUpdate():void {
+				
+				_repositoryIDKeyValuePairMapping = {};
+				_repositoryIDKeyValuePairMapping[0] = BYPASS_REPOSITORY_XML;
+				
+				var highlightRepositories:IViewCursor = repositoriesXMLListCollection.createCursor();
+				
+				while (!highlightRepositories.afterLast) {
+					
+					var repository:XML = XML(highlightRepositories.current);
+					
+					_repositoryIDKeyValuePairMapping [repository.id] = repository;
+					
+					highlightRepositories.moveNext();
+					
+	
+				}
+				
+					listTheBugsWhenMappingIsAvailable();			
+				
+			}
+			
+			
+			
+		  /** @  listTheBugsWhenMappingIsAvailable() - function(private)
+	       *   @ null - function input parameter
+	       *   @ void - no return value
+           *   @ function description - See Appendix I for the official documentation.
+	       **/		
+				
+			
+			private function listTheBugsWhenMappingIsAvailable():void {
+				
+				if (_projectsFlagSwitch && _repositoriesFlagSwitch) {
+					
+					listTheBugs();
+					
+				}
+				
+			}
+			
+			
+
+		]]>
+	</mx:Script>
+	
+	
+	
+		<!-- This tag defines an HTTPService with an id or variable named  errorsListService and GET(s) the duties.xml data, therefore starting the index action  of the DutiesController (in Rails)
+		Once the DutiesController has executed, a result from the HTTPService (below the ending mx:Script tag) will be handled by the Actionscript
+		E4X API, which is now native to Flash and Flex (thank you Adobe !). -->
+	
+		<!--I binded the source attribute or property of this XMLListCollection  to the HTTPService above, therefore taking the last result
+	    of the service, which just so happens to be an XML doc and grab the XMLList ( which is the child node) which is the source 
+	    of an XMLListCollection called bugsXMLListCollection, as seen right below this fairly large comment.  Understood ?  -->
+	
+	   <!--This HTTPService's url location is /projects.xml which starts off by invoking the ProjectsController controller action in xml format (hence the resultFormat of e4x, which as I have stated a couple of times already, is native to Actionscript as of version 3-->
+	
+	
+		<mx:HTTPService id="bugsListService" url="/bugs.xml" resultFormat="e4x" result="bugsListResultHandler(event)"/>
+		
+        <mx:XMLListCollection id="bugsXMLListCollection" source="{XMLList(bugsListService.lastResult.children())}"/>
+        
+        <mx:Binding source="{requestEmptyRepositories(repositoriesXMLListCollection.source)}" destination="_noRepositoriesXMLList"/>
+        
+			
+		<mx:HTTPService id="projectsServiceList" url="/projects.xml" resultFormat="e4x" result="listTheProjectsResultHandler(event)"/>
+		
+	    <mx:XMLListCollection id="projectsXMLListCollection" source="{XMLList(projectsServiceList.lastResult.children())}"/>
+	    
+	    <mx:Binding source="{requestEmptyProjects(projectsXMLListCollection.source)}" destination="_noProjectsXMLList"/>
+	    
+		
+		<mx:HTTPService id="repositoriesServiceList" url="/repositories.xml" resultFormat="e4x" result="repositoriesListResultHandler(event)"/>
+		
+        <mx:XMLListCollection id="repositoriesXMLListCollection" source="{XMLList(repositoriesServiceList.lastResult.children())}"/>
+		
+		<mx:Binding source="{requestEmptyRepositories(repositoriesXMLListCollection.source)}" destination="_noRepositoriesXMLList"/>
+		  	
+		  	
+		  	
+	<mx:HBox width="100%" height="100%">
+		
+	
+            <mx:VBox height="100%" width="100%">
+            
+            
+            
+            <mx:TabNavigator height="100%" width="100%">
+            
+            	<control:BugListBox id="bugsAccordionTab" width="100%" bugsXMLListCollection="{bugsXMLListCollection}" projectIDKeyValuePairMapping="{_projectIDKeyValuePairMapping}"  repositoryIDKeyValuePairMapping="{_repositoryIDKeyValuePairMapping}" noProjectsXMLList="{_noProjectsXMLList}" noRepositoriesXMLList="{_noRepositoriesXMLList}"/>
+            	<control:ProjectListBox id="projectAccordionTab" width="100%" projectsXMLListCollection="{projectsXMLListCollection}"/>
+            	<control:Details id="detailAccordionTab" width="100%"/> 
+            	<control:RepositoryListBox id="repositoryAccordionTab" width="100%" repositoriesXMLListCollection="{repositoriesXMLListCollection}"/>
+            	
+             </mx:TabNavigator>	
+   
+   
+     </mx:VBox>
+     
+     
+     	<mx:VBox width="100%" height="100%" horizontalAlign="center">
+			
+			<mx:Image source="com/creativecontrol/assets/creative_control.jpg"/>
+			
+			<mx:Label text="{'Your developer login credentials are : ' + user.login + ' (' + user.email +')'}"/>
+			
+			<mx:Label text="{'You are logged into the bug tracking system as : ' + user.first_name + '!'}"/>
+			
+			
+			<mx:Accordion height="350" width="100%" >
+				
+				<control:CreateBugComponent id="createBugComp" createBug="listTheBugs()"  projectsXMLListCollection="{_noProjectsXMLList}" repositoriesXMLListCollection="{_noRepositoriesXMLList}"/>
+				<control:CreateProjectComponent  id="createProjectComp" createProject="listTheProjects()"/>
+				<control:CreateRepositoryComponent  id="createRepositoryComp" createRepository="listTheRepositories()"/>
+				
+				<!--This Component is going to allow the administrator (Project Manager etc...), to Record a Video of themselves explaining details relating to the project, or even Upload a Video to the Web Server for more advanced Project Descriptions (On Location Shoots, Presentations, Video Conferences, the list may go on and on.).-->
+				<!--<control:VideoPlayerComp id="createVideoClip" createVideoClip="createTheVideoClip()"/>-->
+			
+		
+	        </mx:Accordion>
+	        
+	        <mx:VBox width="100%" height="100%">
+	        
+	        	
+	        	
+	      
+	        
+	       
+	        	<mx:VideoDisplay height="150" width="100%"/>
+	        	<mx:HBox horizontalAlign="left" width="300">
+	        		
+	        	
+	        		
+	        		<mx:Text fontFamily="arial" text="Video Name" textAlign="left">
+	        			
+	        			
+	        		</mx:Text>
+	        		
+	        		<mx:TextInput id="videoNameInput" borderThickness="14" borderStyle="solid" width="75%">
+	        			
+	        		</mx:TextInput>
+	        		
+	        		<mx:HBox>
+	        			
+	        			
+	        		</mx:HBox>
+	        		
+	        	</mx:HBox>
+	        <mx:HBox horizontalAlign="left" width="300">
+	        		
+	        	
+	        		
+	        		<mx:Text fontFamily="arial" text="Find a Video" textAlign="left">
+	        			
+	        			
+	        		</mx:Text>
+	        		
+	        		<mx:TextInput id="videoLocationInput" borderThickness="14" borderStyle="solid" width="199">
+	        			
+	        		</mx:TextInput>
+	        		
+	        		<mx:HBox>
+	        			
+	        			
+	        		</mx:HBox>
+	        		
+	        	</mx:HBox>
+	        	
+	        	<mx:HBox horizontalAlign="left" width="100%">
+	        		
+	        		<mx:Button label="Submit Video" width="100%" height="30"/>
+	        		
+	        	</mx:HBox>
+	        	
+	        	
+	        </mx:VBox>
+			
+			
+		
+			
+			
+	</mx:VBox> 
+		
+	
+	</mx:HBox>
+	
+</mx:HBox>

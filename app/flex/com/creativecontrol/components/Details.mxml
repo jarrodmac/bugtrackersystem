@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Details" paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="5">
+   
+   <mx:TextArea width="100%" height="100%"/>
+   
+   <mx:ControlBar width="100%" horizontalAlign="center">
+       
+	   <mx:Button id="saveButton" label="Save" width="100%" height="30"/>
+      
+	  <mx:Button id="changeButton" label="Change" height="30"/>
+   
+   </mx:ControlBar>
+</mx:VBox>

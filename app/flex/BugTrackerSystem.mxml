@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:control="com.creativecontrol.components.*" layout="vertical" backgroundGradientColors="[#ffffff, #c0c0c0]" horizontalAlign="center" verticalAlign="top" width="100%" height="100%">
+	
+	
+<mx:Script>
+	<![CDATA[
+		
+		import com.creativecontrol.events.CreateAccountEvent;
+		import com.creativecontrol.events.EventLogin;
+		
+		
+		/* @ _user:XML - Bindable variable(private) */
+		
+		[Bindable]
+		
+		private var _user:XML;
+		
+		
+		private var _articles:String = "                        Bug Be Gone Repellent.  Guaranteed 100% effective !.";
+		
+		
+	
+		/** @ createAccountEvent - function(private)
+		 *   @ e::CreateAccountEvent  - function input parameter(this takes a custom Event as an input for the function or event handler)
+		 *   @ void - return value
+		 *   @ function description - this function calls login with the user parameter of the respective event.
+		 * */
+	
+	    private function createAccountHandler(e:CreateAccountEvent):void {
+	    	login(e.user);
+	    	
+	    }
+	    
+	    
+	    /** @ loginHandler - function(private)
+	    *    @ e::EventLogin - function input parameter
+	    *    @ void - return value
+	    *    @ function description - this function calls login with the user parameter of the respective event.
+	    * */
+	    
+	    private function loginHandler(e:EventLogin):void {
+	    	login(e.user);
+	    }
+	    
+	    /** login - function(private)
+	    * 	  @ user::XML - function input parameter
+	    *    @ input parameter, (user:XML),  is used to set the _user variable (this function may be considered a setter method)
+	    *    @ return - void
+	    *    Details: This private login function takes, as an input parameter or property, user data, data-typed as XML.  The user variable can be found inside of the CreateAccountEvent class's function constructor.  
+	    *    Note-A: The user variable, which is data-typed as XML, is dispatched with a CreateAccountEvent.  It literally travels with it !  It is stored inside of the Event Object itself(it's stored inside of it).   
+	    *    Note-B: This function used to be named displayMainContainer
+	     * */
+	    
+	    
+	    private function login(user:XML):void {
+	    	_user = user;
+	    	
+	    	mainList.selectedChild = mainContainer;
+	    }
+	    
+	    
+	
+	]]>
+</mx:Script>
+
+    <mx:VDividedBox width="100%" height="100%">
+
+<mx:ViewStack id="mainList" width="100%" height="100%">
+
+<mx:VBox id="IndexBox" horizontalAlign="center" verticalAlign="middle" width="100%" height="100%">
+
+
+<mx:Image source="com/creativecontrol/assets/creative_control.jpg"/>
+
+<mx:Label text="A bug tracking system for logging and reporting errors and bugs in programs or web apps. "/>
+
+<mx:Spacer height="10"/>
+
+<mx:Text width="500" text="{_articles}"/>
+
+<mx:Spacer height="10"/>
+
+<mx:Accordion width="400" height="300">
+
+<control:AccountRegistration accountCreate="createAccountHandler(event)"/>
+
+<control:AreaLogin login="loginHandler(event)"/>
+
+</mx:Accordion>
+
+<mx:Label text="*Developed by CreativeControl Interactive!"/>
+
+</mx:VBox>
+
+
+
+<control:MainContainer id="mainContainer" user="{_user}"/>
+
+</mx:ViewStack>
+
+ </mx:VDividedBox>
+</mx:Application>
+
+

@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Main Area">
+
+
+		<mx:Script>
+		
+		
+		<![CDATA[
+		
+					
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.rpc.events.ResultEvent;
+			import com.creativecontrol.components.MainContainer;
+			import com.creativecontrol.events.EventBug;
+			import com.creativecontrol.utilities.utilitiesXML;
+			
+			
+			
+		    public const RELEASE:int = 0;
+		    public const ALL_BUGS:int = 1;
+		    public const PROJECT_BUGS:int = 2;
+		    public const BUGS_AT_REPOSITORIES:int = 3;
+		    private const SHOW_OPTIONS:Array = [{label:"Releases", data:RELEASE,hasSubChoice:false},{label:"All Bugs", data:ALL_BUGS,hasSubChoice:false},{label:"Bugs in Project:", data:PROJECT_BUGS, hasSubChoice:true},{label:"Bugs in Repositories:", data:BUGS_AT_REPOSITORIES,hasSubChoice:true}];
+		
+		
+		
+			  [Bindable]
+		
+		         private var _subOptions:Array;
+		
+		
+			   [Bindable]
+			
+			     public var bugsXMLListCollection:XMLListCollection; 
+			   
+			   [Bindable]
+			   
+			     public var  repositoryIDKeyValuePairMapping:Object;
+			
+			   [Bindable]
+			   
+			     public var projectIDKeyValuePairMapping:Object;
+			
+			   [Bindable]
+			   
+			     public var noRepositoriesXMLList:XMLListCollection;
+			
+			   [Bindable]
+			   
+			     public var noProjectsXMLList:XMLListCollection;
+			     
+			
+			
+			 /** @ requestProject() - function(public)
+			     *  @ project_id:int - input value (data-typed as an integer)
+			     *  @ XML -  return value
+			     *  @ function descriptionA - This requestProject() function takes a project_id as an input parameter and returns the XML for the project.  This function also makes sure that the projectIDKeyValuePairMapping is not null and returns projectIDKeyValuePairMapping[project_id](this will also help to work around the warnings that will pop up in binding expressions).  The [] syntax is used for Array access and map access, so the compiler may get baffled once in a while)..
+			     **/
+		
+							
+									public function requestProject(project_id:int):XML {
+										
+										if (projectIDKeyValuePairMapping == null) {
+											
+											return MainContainer.BYPASS_PROJECT_XML;
+											
+										}
+										
+										return projectIDKeyValuePairMapping[project_id];
+										
+										
+										
+									}
+									
+									
+			 /**   @ requestRepository() - function(public)
+			     *  @ repository_id:int - input value (data-typed as an integer)
+			     *  @ XML -  return value
+			     *  @ function descriptionA - This requestRepository() function takes a repository_id as an input parameter and returns the XML for the repository.  This function also makes sure that the repositoryIDKeyValuePairMapping is not null and returns repositoryIDKeyValuePairMapping[repository_id](this will also help to work around the warnings that will pop up in binding expressions).  The [] syntax is used for Array access and map access, so the compiler may get baffled once in a while)..
+			     **/		
+									
+									
+									public function requestRepository(repository_id:int):XML {
+										
+										if (repositoryIDKeyValuePairMapping == null) {
+											
+											return MainContainer.BYPASS_REPOSITORY_XML;
+											
+										}
+										
+										return repositoryIDKeyValuePairMapping[repository_id];
+										
+									}
+									
+									
+				
+				public function summaryPanelBugSelectionUpdates():void {
+					
+					var bugSelection:XML = XML(bugsGrid.selectedItem);
+					var params:Object = new Object();
+					params['bug[name]'] = nameInput.text;
+					params['bug[project_id]'] = projectsComboBox.selectedItem.id;
+					params['bug[repository_id]'] = repositoriesComboBox.selectedItem.id;
+					params['bug[finished]'] = finishedComboBox.selected;
+					params['bug[details]'] = detailsInput.text;
+					params['_method'] = "PUT";
+					updateBugsListService.url = "/bugs/" + bugSelection.id + ".xml";
+					updateBugsListService.send(params);
+					
+					
+				}
+									
+				
+				
+				 /**   @ updateTheFinishedBug() - function(public)
+			     *  @ bug:XML -1st  input value (data-typed as XML)
+			     *  @ finished:Boolean - 2nd input value (data)
+			     *  @ void - no return value
+			     *  @ function description -  This starts by creating the updateTheFinishedBug function, that calls updateBugsListService like the ComboBox itemRenderers do.  Also, erase the DataGridDefinition(older) and change it with a new one.  This holds another itemrenderer, that defines another Component.  Here is where the new utilities class that was just added is now utilized called 'utilitiesXML'.  The class is imported and the updateTheFinishedBug function is created that calls the outerDocument.updateFinishedBugwith the XML (data) of the bug and the Boolean value that is toggled from the finished property.s
+			     **/	
+			     					
+									
+			public function updateTheFinishedBug(bug:XML, finished:Boolean):void {
+				
+				
+				var params:Object = new Object;
+				params['bug[finished]'] = finished;
+				params['_method'] = "PUT";
+				updateBugsListService.url = "/bugs/" + bug.id + ".xml";
+				updateBugsListService.send(params);
+				
+				
+			}
+									
+									
+			 /**   @ doProjectBugUpdate() - function(public)
+			     *  @ bug:XML- input value:A (data-typed as XML)
+			     *  @ project:XML- input value:B (data-typed as XML)
+			     *  @ void -  no return value
+			     *  @ function description A - This doProjectBugUpdate method will update the project that a bug is in or part of.  It will make sure that the project is definitely different, by comparing the project_id.  If it does, a params Object will be created to use an associative array and then set 2 keys in it, which are:
+ 			     *  @             	A)  bug[project_id] - the project ID attribute that is being updated.
+				 *  @                B) _method to "PUT" - a PUT cannot be sent, so a POST is sent and we add the _method parameter as a work around that Rails is hooked up to look for.
+				 *  @ function description B - Also, the url of the updateBugsListService is set to a dynamically set URL that will be created with a String concatenation of "/errors/" + bug.id + ".xml", which triggers the update action, therefore requesting a :format of xml in the BugsController class, for the error with the id that is specified in the url (this is related to Rails routing, and also what is called "pretty url's"or "tiny url's").  The doProjectBugUpdate method will then call updateBugsListService.
+				 *  @ function decription C - By setting the bug[project_id], the update_attributes will be triggered with params[:bug] in the update method of the BugsController.  The update method created by the scaffold will update every attribute of the error it is given, so it should be used from the Flex side of things.
+			     * **/		
+									
+									
+									public function doProjectBugUpdate(bug:XML, project:XML):void {
+										
+										if (bug.project_id != project.id) {
+											
+											var params:Object = new Object();
+											params['bug[project_id]'] = project.id;
+											params['_method'] = "PUT";
+											updateBugsListService.url = "/bugs/" + bug.id + ".xml";
+											updateBugsListService.send(params);
+										
+										}
+										
+										
+									}
+									
+									
+						
+			 /**   @ doBugRepositoryUpdate() - function(public)
+			     *  @ bug:XML - input value:A (data-typed as XML)
+			     *  @ repository:XML - input value:B (data-typed as XML)
+			     *  @ void -  no return value
+			     *  @ function description A - This doBugRepositoryUpdate method will update the repository that a bug is in or part of.  It will make sure that the project is definitely different, by comparing the repository_id.  If it does, a params Object will be created to use an associative array and then set 2 keys in it, which are:
+ 			     *  @             	A)  bug[project_id] - the project ID attribute that is being updated.
+				 *  @                B) _method to "PUT" - a PUT cannot be sent, so a POST is sent and we add the _method parameter as a work around that Rails is hooked up to look for.
+				 *  @ function description B - Also, the url of the updateBugsListService is set to a dynamically set URL that will be created with a String concatenation of "/bugs/" + bug.id + ".xml", which triggers the update action, therefore requesting a :format of xml in the BugsController class, for the bug with the id that is specified in the url (this is related to Rails routing, and also what is called "pretty url's"or "tiny url's").  The doBugRepositoryUpdate method will then call updateBugsListService.
+				 *  @ function decription C - By setting the bug[repository_id], the update_attributes will be triggered with params[:bug] in the update method of the BugsController.  The update method created by the scaffold will update every attribute of the error it is given, so it should be used from the Flex side of things.
+			     * **/			
+									
+									
+										public function doBugRepositoryUpdate(bug:XML, repository:XML):void {
+										
+										if (bug.location_id != repository.id) {
+											
+											var params:Object = new Object();
+											params['bug[repository_id]'] = repository.id;
+											params['_method'] = "PUT";
+											updateBugsListService.url = "/bugs/" + bug.id + ".xml";
+											updateBugsListService.send(params);
+										
+										}
+										
+										
+									}
+									
+									
+									
+									
+			 /**   @ updateBugsResultHandler() - function(private)
+			     *  @ event:ResultEvent - input value (data-typed as a ResultEvent)
+			     *  @ void - no return value
+			     *  @ function description - This function will be invoked when the updateBugsListService returns. when an Error is updated, the element of the errorsXMLListCollection with the new XML for the Error needs to be replaced.  It will cast the newError to XML and it will then do a for loop, checking for the id of each error to look for the one that matches.  Since there is an abstraction from the index of the IViewCursor, the for loop is used to have an index set the item.  Whenever a match is located, it is replaced and the loop statement will break
+			     **/
+			     
+									
+									private function updateBugsResultHandler(event:ResultEvent):void {
+										
+										var bugNew:XML = XML(event.result);
+										
+											for (var a:int = 0; a < bugsXMLListCollection.length; a++) {
+												
+											       var iteratorABug:XML = XML(bugsXMLListCollection.getItemAt(a));
+											       	
+											       		if (iteratorABug.id == bugNew.id) {
+											       			
+											       			bugsXMLListCollection.setItemAt(bugNew, a);
+											       			
+											       			break;
+											       			
+											       		}
+												
+											}
+										
+										
+									}
+									
+									
+									
+			  /**  @ bugDeletion() - function(public)
+			     *  @ bug:XML - input value (data-typed as XML)
+			     *  @ void - no return value
+			     *  @ function description - This function invokes the send function of deleteBugsService() to erase the given bug.  An HTTP DELETE needs to sent, yet in order to do this, send a POST and set the _method:"ERASE" parameter(the anonymous object syntax is utilized)  The specific bug is being erased by adding it's id in the URL.
+			     **/
+									
+									
+									public function bugDeletion(bug:XML):void {
+										
+											deleteBugsService.url = "/bugs/" + bug.id + ".xml";
+											deleteBugsService.send({_method:"DELETE"});	
+										
+									}
+									
+									
+									
+			 /**  @ bugsDestructionResultHandler() - function(private)
+			     *  @ event:ResultEvent - input value (data-typed as a ResultEvent)
+			     *  @ void - no return value
+			     *  @ function description - This function named bugsDestructionResultHandler(), that shows an Alert message in case of an error and will erase the bug from the XMLListCollection on success.  The event.result must be cast to XML in order for this to happen (since it is the Bug XML) and extract it's id to look for.  Then it loops through the the bugsXMLListCollection, grabbing each bugs and comparing it's id with the id that is being searched for.  If a match
+                 *  @                                    is found, the bug is removed and the loop breaks, since there can only be one bug with that specific id.  This will make the bugsGrid to update automatically, since it's dataProvider is bound to the bugsXMLListCollection.
+			     **/	
+									
+									
+									private function bugsDestructionResultHandler(event:ResultEvent):void {
+									
+											if (event.result == "error") {
+												
+												Alert.show("You did not successfully erase the assigned bug.", "Error");
+												
+										     	} else {
+												
+												
+												var bugDeletion:XML = XML(event.result);
+												var idErase:int = bugDeletion.id;
+												
+												for (var a:int; a < bugsXMLListCollection.length; a++) {
+													
+													var iteratorABug:XML = XML(bugsXMLListCollection.getItemAt(a));
+													
+															if (iteratorABug.id == idErase) {
+																
+																bugsXMLListCollection.removeItemAt(a);
+																
+																break;
+																
+															}
+													
+												}
+												
+												
+			     					}
+									
+									
+					}
+						
+	
+
+]]>
+
+</mx:Script>
+
+<!--   This HTTPService with an id of updateBugsListService.  This will do a POST which will, act as a PUT to the URL which is dynamically set and will look like "/bugs/{id}.xml", which triggers the update action(requesting a format of xml) in the BugsController for the bug with the id in the URL. -->
+
+<mx:HTTPService id="updateBugsListService" resultFormat="e4x" method="POST" result="updateBugsResultHandler(event)"/>
+
+<!--  This HTTPService will do a POST and also acts as a PUT to the dynamically set URL that looks like /"bugs/[id].xml", which will then trigger the update action(that requests a :format of xml) in the BugsController for the bug with the id in the URL.  -->
+
+<mx:HTTPService id="deleteBugsService" resultFormat="e4x" method="POST" result="bugsDestructionResultHandler(event)"/>
+
+	
+<mx:VBox width="100%" height="60%">
+
+
+<mx:HBox width="100%" paddingLeft="5" paddingRight="5">
+
+
+<mx:Label text="Reveal:"/>
+
+
+<mx:ComboBox id="mainOptionLB" dataProvider="{SHOW_OPTIONS}"/>
+
+<mx:ComboBox id="subOptionLB" width="100%" dataProvider="{_subOptions}" visible="{mainOptionLB.selectedItem.hasSubOption}"/>
+
+</mx:HBox>
+
+<mx:DataGrid id="bugsGrid" width="100%" height="100%" dataProvider="{bugsXMLListCollection}">
+
+
+<mx:columns>
+
+<mx:DataGridColumn headerText="" width="20" dataField="finished" editable="false">
+	
+	<mx:itemRenderer>
+		
+		
+		<mx:Component>
+			
+			
+			<mx:HBox width="25" paddingLeft="5">
+				
+				<mx:Script>
+					<![CDATA[
+						
+						import com.creativecontrol.utilities.utilitiesXML;
+						
+						
+						private function finishedUpdating():void {
+							
+							outerDocument.updateTheFinishedBug(XML(data), !utilitiesXML.toBooleanXMLList(data.finished));
+							
+							
+							
+						}
+						
+						
+						
+					]]>
+				</mx:Script>
+				
+				
+				<mx:CheckBox selected="{utilitiesXML.toBooleanXMLList(data.finished)}" click="finishedUpdating()"/>
+				
+				
+			</mx:HBox>
+			
+		</mx:Component>
+		
+	</mx:itemRenderer>
+	
+</mx:DataGridColumn>
+
+<mx:DataGridColumn headerText="Status" width="65" dataField="finished"/>
+
+<mx:DataGridColumn headerText="Bug" width="150" dataField="name"/>
+
+<mx:DataGridColumn headerText="Project ID" width="100" dataField="project_id" sortable="false" editable="false"/>
+
+
+<mx:DataGridColumn headerText="Details" width="300" dataField="details"/>
+
+<mx:DataGridColumn headerText="" width="70" editable="false">
+	
+	<mx:itemRenderer>
+		
+		<mx:Component>
+			
+			<mx:Button label="erase" click="outerDocument.bugDeletion(XML(data))"/>
+			
+		</mx:Component>
+		
+	 </mx:itemRenderer>
+	
+	
+</mx:DataGridColumn>
+
+<mx:DataGridColumn headerText="Project" dataField="project_id" width="150" editable="false" sortable="false">
+	
+	<mx:itemRenderer>
+		
+		<mx:Component>
+			<mx:ComboBox width="150" labelField="name" dataProvider="{outerDocument.noProjectsXMLList}" selectedItem="{outerDocument.requestProject(data.project_id)}" dataChange="dataChangeHandler(XML(data))" change="outerDocument.doProjectBugUpdate(XML(data), XML(selectedItem))">
+				
+						<mx:Script>
+							<![CDATA[
+								
+										
+										private function dataChangeHandler(data:XML):void {
+											
+												if (data != null) {
+													
+													selectedItem = outerDocument.requestProject(data.project_id);
+													
+												} else {
+													
+													selectedItem = MainContainer.BYPASS_PROJECT_XML;
+													
+													
+												}
+											
+											
+										}
+								
+										
+								
+								
+							]]>
+						</mx:Script>
+		
+		      </mx:ComboBox>
+		
+		</mx:Component>
+				
+	</mx:itemRenderer>
+	
+</mx:DataGridColumn>
+
+
+<mx:DataGridColumn headerText="Repository" dataField="repository_id" width="150" editable="false" sortable="false">
+	
+	<mx:itemRenderer>
+		
+		<mx:Component>
+			<mx:ComboBox width="150" labelField="name" dataProvider="{outerDocument.noRepositoriesXMLList}" selectedItem="{outerDocument.requestProject(data.location_id)}" dataChange="dataChangeHandler(XML(data))" change="outerDocument.doBugRepositoryUpdate(XML(data), XML(selectedItem))">
+				
+						<mx:Script>
+							<![CDATA[
+								
+										
+										private function dataChangeHandler(data:XML):void {
+											
+												if (data != null) {
+													
+													selectedItem = outerDocument.requestRepository(data.repository_id);
+													
+												} else {
+													
+													selectedItem = MainContainer.BYPASS_REPOSITORY_XML;
+													
+													
+												}
+											
+											
+										}
+								
+										
+								
+								
+							]]>
+						</mx:Script>
+		
+		      </mx:ComboBox>
+		
+		</mx:Component>
+				
+	</mx:itemRenderer>
+	
+</mx:DataGridColumn>
+
+
+<!-- Column before Application Re-Factoring (left here just for good measure)<mx:DataGridColumn headerText="Project" width="65" dataField="project_id"/>-->
+
+<!--<mx:DataGridColumn headerText="Repository" width="75" dataField="repository_id"/>-->
+
+
+
+<mx:DataGridColumn headerText="" width="50"/>
+
+</mx:columns>
+
+</mx:DataGrid>
+
+</mx:VBox>
+
+<mx:VBox>
+
+        <mx:HBox>
+	
+
+		      <mx:DateChooser id="chooseDate" width="100%" height="100%"/>
+		        <mx:DateChooser id="chooseDate1" width="100%" height="100%"/>
+		          <mx:DateChooser id="chooseDate2" width="100%" height="100%"/>
+		            <mx:DateChooser id="chooseDate3" width="100%" height="100%"/>
+		              <mx:DateChooser id="chooseDate4" width="100%" height="100%"/>
+		
+		</mx:HBox>
+		
+</mx:VBox>
+
+
+
+
+<mx:Panel id="summaryPanel" title="Bugs" width="100%" height="40%" paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="5">
+
+<mx:HBox width="100%">
+
+<mx:Label text="Name" width="50"/>
+
+<mx:TextInput id="nameInput" width="100%" text="{bugsGrid.selectedItem.name}"/>
+
+
+<mx:CheckBox id="finishedComboBox" label="Finished" selected="{utilitiesXML.toBooleanXMLList(bugsGrid.selectedItem.finished)}"/>
+
+</mx:HBox>
+
+<mx:HBox width="100%" verticalAlign="middle">
+
+<mx:Label text="Project" width="50"/>
+
+<mx:ComboBox id="projectsComboBox" width="200" labelField="name" dataProvider="{noProjectsXMLList}" selectedItem="{requestProject(bugsGrid.selectedItem.project_id)}"/>
+
+<mx:CheckBox label="Release"/>
+
+<mx:Spacer width="100%"/>
+
+<mx:Label text= "Repository"/>
+
+<mx:ComboBox id="repositoriesComboBox" width="200" labelField="name" dataProvider="{noRepositoriesXMLList}" selectedItem="{requestRepository(bugsGrid.selectedItem.repository_id)}"/>
+
+</mx:HBox>
+
+<mx:HBox width="100%" height="100%">
+
+<mx:Label text="Details" width="50"/>
+
+<mx:TextArea id="detailsInput" width="100%" height="100%" text="{bugsGrid.selectedItem.details}"/>
+
+</mx:HBox>
+
+
+
+<mx:ControlBar width="100%" horizontalAlign="center">
+
+<mx:Button id="btnUpdate" label="Update" width="100%" height="30" click="summaryPanelBugSelectionUpdates()" enabled="{bugsGrid.selectedItem != null}"/>
+
+<mx:Button id="btnDelete" label="Delete" height="30" click="bugDeletion(XML(bugsGrid.selectedItem))" enabled="{bugsGrid.selectedItem != null}"/>
+
+</mx:ControlBar>
+
+
+
+</mx:Panel>
+
+</mx:VDividedBox>
+
+
+

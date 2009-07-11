@@ -1,0 +1,29 @@
+ admin:
+  id: 1
+  login: admin
+  email: admin@creativecontrol.com
+  salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
+  created_at: <%= 5.days.ago.to_s :db %>
+
+
+
+ guest:
+  id: 2
+  login: guest
+  email: guest@gmail.com
+  salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  crypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1 # test
+  created_at: <%= 1.days.ago.to_s :db %>
+  
+  
+  
+ jarrod:
+   id: 3
+   login: jarrod
+   email: jarrod@gmail.com
+   salt: e81e9af59c802bbcf130767ada157033e89266b4
+   crypted_password: 6b7b0c3a7d0f86bf1ff489b767d023ae40248c14
+   created_at: <%= 1.days.ago.to_s :db %>
+
+

@@ -1,0 +1,38 @@
+<p>
+  <b>User:</b>
+  <%=h @bug.user_id %>
+</p>
+
+<p>
+  <b>Project:</b>
+  <%=h @bug.project_id %>
+</p>
+
+<p>
+  <b>Repository:</b>
+  <%=h @bug.repository_id %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%=h @bug.name %>
+</p>
+
+<p>
+  <b>Details:</b>
+  <%=h @bug.details %>
+</p>
+
+<p>
+  <b>Next release:</b>
+  <%=h @bug.next_release %>
+</p>
+
+<p>
+  <b>Finished:</b>
+  <%=h @bug.finished %>
+</p>
+
+
+<%= link_to 'Edit', edit_bug_path(@bug) %> |
+<%= link_to 'Back', bugs_path %>

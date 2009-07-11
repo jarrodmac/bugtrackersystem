@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Create a New Bug">
+
+
+	<!--This Metadata is declaring that this Component is the Event Broadcaster for any Event Listeners that are registered 
+	       to listen out for the specific Event.  Any other Component can now handle this component by name -->
+
+<mx:Metadata>
+	
+	[Event(name="createBug", type="com.creativecontrol.events.EventBug")]
+	
+	
+</mx:Metadata>
+
+
+	<mx:Script>
+		
+	
+		<![CDATA[
+			
+					import mx.rpc.events.ResultEvent;
+					import com.creativecontrol.events.EventBug;		
+					import mx.collections.XMLListCollection;
+					
+					
+					[Bindable]
+					
+					public var projectsXMLListCollection:XMLListCollection;
+					
+					[Bindable]
+					
+					public var repositoriesXMLListCollection:XMLListCollection;
+					
+					[Bindable]
+					
+					private var _currentProjectID:int;
+					
+					[Bindable]
+					
+					private var _currentRepositoryID:int;
+					
+				
+			
+			
+			   /** @ createBugResultHandler() - function(public)
+			     *  @ event:ResultEvent - input value 
+			     *  @ void - no return value
+			     *  @ function descriptionA - This Event Handler does a event.result casting to XML ( it is basically a Type Cast ) that takes a ResultEvent and stores   the result in a local variable, which is  destroyed when the function is finished executing.
+			     *  @ function descriptionB - Here is the EventDispatcher instance, which takes a new Event Object as a parameter, which acts as a universal event trigger for any listeners listening for the Event (it is identical to an addEventListener, with the EVENT TYPE attached to the Event target, as well as the Event Handler as the last parameter.
+			   **/
+			
+			
+					private function createBugResultHandler(event:ResultEvent):void {
+						
+						var xmlResult:XML = XML(event.result);
+						
+						dispatchEvent(new EventBug(EventBug.CREATE_BUG, xmlResult));
+						
+					}
+					
+					
+	/**  The send method is being dynamically constructed with the XML Data **/
+	
+					
+			   /** @ createTheBug() - function(private)
+			     *  @ null - input value 
+			     *  @ void - no return value
+			     *  @ function descriptionA - This Event Handler does a event.result casting to XML ( it is basically a Type Cast ) that takes a ResultEvent and stores   the result in a local variable, which is  destroyed when the function is finished executing.The send method is being dynamically constructing with the XML Data 
+			   **/
+					
+					 private function createTheBug():void {
+					  	
+					  	_currentProjectID = XML(projectsComboBox.selectedItem).id;
+						_currentRepositoryID = XML(repositoriesComboBox.selectedItem).id;
+						
+						   createBugsService.send();
+						
+						
+					}
+					
+			
+		]]>
+	</mx:Script>
+	
+	
+	
+<!--	This tag is very, very important as is every other tag in the App, yet I want to explain it a bit in detail.  It is a Web Service that uses Actionscripts E4X
+        XML API, which is native to Actionscript as of Actionscript 3.  Now, the url parameter is where the file to be parsed is located (where all the XML nodes and info lies).  The method parameter
+        is set to 'POST' the data which is sent to duties.xml, starting the method 'create' and then  the contentType is set as application/xml to send XML Data..  The last line in this
+         tag is the result and as you can see, is set as an Event Handler for the Dispatched Event.  There you go Joe -->
+         
+
+	<mx:HTTPService id="createBugsService" url="/bugs.xml" contentType="application/xml" resultFormat="e4x" method="POST" result="createBugResultHandler(event)">
+		
+
+	<mx:request>
+		
+		<bug>
+		
+			<name>{nameInput.text}</name>
+			<details>{detailsInput.text}</details>
+			<project_id>{_currentProjectID}</project_id>
+		    <repository_id>{_currentRepositoryID}</repository_id>
+			
+			
+			
+		</bug>
+		
+		
+	</mx:request>
+
+	</mx:HTTPService> 
+
+
+<mx:Form width="100%" height="100%">
+
+<mx:FormItem label="Bug">
+
+<mx:TextInput id="nameInput" width="200"/>
+
+</mx:FormItem>
+
+<mx:FormItem label="Details">
+
+<mx:TextArea id="detailsInput" width="200" height="100"/>
+
+</mx:FormItem>
+
+<mx:FormItem label="Project">
+
+<mx:ComboBox id="projectsComboBox" width="200" labelField="name" dataProvider="{projectsXMLListCollection}"/>
+
+</mx:FormItem>
+
+<mx:FormItem label="Next Release Phase">
+
+<mx:CheckBox id="checkNextRelease" label="This is for the next release phase"/>
+
+</mx:FormItem>
+
+<mx:FormItem label="Repository">
+
+<mx:ComboBox id="repositoriesComboBox" width="200" labelField="name"  dataProvider="{repositoriesXMLListCollection}"/>
+
+</mx:FormItem>
+
+<mx:FormItem>
+
+	<mx:Button label="Send" width="150" height="30" click="createTheBug()"/>
+
+</mx:FormItem>
+
+<!--  This button acts as the Event Target and  exectues the createBugService's send() method which is actually called on the service.
+  The button is actually 'handled' by an Event Handler called 'createTheBug' as you can see down below, yet I wanted to explain what the function or method actually does-->
+
+
+	
+</mx:Form>
+
+</mx:VBox>

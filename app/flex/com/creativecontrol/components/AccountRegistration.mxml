@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Developer Registration Form">
+
+  <mx:Metadata>
+    [Event(name="accountCreate", type="com.creativecontrol.events.CreateAccountEvent")]
+  </mx:Metadata>
+  
+  <mx:Script>
+  	<![CDATA[
+  		
+  		import mx.controls.Alert;
+        import mx.rpc.events.ResultEvent;
+        import com.creativecontrol.events.CreateAccountEvent;
+        
+        
+        
+      /**  @ createAccount() - function(private)
+	     *  @ null - input value or parameter
+	     *  @ void - no return value
+		 *  @ function description - this function calls the svcAccountCreate.send method.  It does not return a value, it just does what it says.
+	  **/
+        
+       private function createAccount():void {
+               svcAccountCreate.send(); 
+       }
+       
+       
+      /**  @ accountCreateResultHandler() - function(private)
+	     *  @ event:ResultEvent - input value or parameter
+	     *  @ void - no return value
+		 *  @ function description - See Appendix A for the official documentation
+	  **/
+       
+       private function accountCreateResultHandler(event:ResultEvent):void {
+               var result:Object = event.result;
+         
+          if (result == "error") {
+               Alert.show("There was an error validating your account.  Please try again.","Error");
+       
+          } else {
+          	
+          	dispatchEvent(new CreateAccountEvent(XML(result)));
+          	
+          }
+          
+       }
+       
+       
+  	]]>
+  </mx:Script>
+  
+  <mx:HTTPService id="svcAccountCreate" url="/users.xml" contentType="application/xml" resultFormat="e4x" method="POST" result="accountCreateResultHandler(event)">
+
+  <mx:request>
+     <user>
+     <login>{loginInput.text}</login>
+     <email>{emailInput.text}</email>
+     <first_name>{firstnameInput.text}</first_name>
+     <last_name>{lastnameInput.text}</last_name>
+     <password>{passwordInput.text}</password>
+     <password_confirmation>{passwordConfirm.text}</password_confirmation>
+     </user>
+     </mx:request>
+     </mx:HTTPService>
+   
+
+<mx:Form labelWidth="150">
+
+<mx:FormItem label="First Name">
+<mx:TextInput id="firstnameInput"/>
+</mx:FormItem>
+<mx:FormItem label="Last Name">
+<mx:TextInput id="lastnameInput"/>
+</mx:FormItem>
+
+<mx:FormItem required="true" label="Email Address">
+<mx:TextInput id="emailInput"/>
+</mx:FormItem>
+
+<mx:FormItem required="true" label="Username">
+<mx:TextInput id="loginInput"/>
+</mx:FormItem>
+<mx:FormItem required="true" label="Password">
+<mx:TextInput id="passwordInput" displayAsPassword="true"/>
+</mx:FormItem>
+
+<mx:FormItem required="true" label="Confirm Password">
+<mx:TextInput id="passwordConfirm" displayAsPassword="true"/>
+</mx:FormItem>
+<mx:FormItem>
+<mx:Button id="accountCreateBtn" label="Register Account" click="createAccount()"/>
+</mx:FormItem>
+
+</mx:Form>
+</mx:VBox>

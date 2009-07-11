@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 3
+  project_id: 1
+  repository_id: 1
+  name: Error # 3362
+  details: This is set for the stable release
+  next_release: false
+  finished: true
+
+two:
+  user_id: 3
+  project_id: 1
+  repository_id: 1
+  name: Error # 3900
+  details: Bridge Release Error
+  next_release: false
+  finished: false

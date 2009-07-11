@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" label="Login">
+
+
+    <mx:Metadata>
+       [Event(name="login", type="com.creativecontrol.events.EventLogin")]
+    </mx:Metadata>
+    
+    <mx:Script>
+    	<![CDATA[
+    		
+    		import mx.controls.Alert;
+            import mx.rpc.events.ResultEvent;
+            import com.creativecontrol.events.EventLogin;
+    		
+    		
+    		
+    		
+      /**  @ login() - function(private)
+	     *  @ null - input value or parameter
+	     *  @ void - no return value
+		 *  @ function description - this function calls the svcAccountLogin.send method with 2 parameters(login and password.  
+	  **/
+    		
+    		private function login():void {
+                  svcAccountLogin.send({login: loginInput.text, password: passwordInput.text});
+    		}
+    		
+    		
+      /**  @ loginAccountResultHandler() - function(private)
+	     *  @ event:ResultEvent - input value or parameter
+	     *  @ void - no return value
+		 *  @ function description - The result of the event is stored inside of a generic Object data-type named 'result'.  It then uses a conditional statement to check if the login contains bogus credentials.  If it does, it will render the error text, else,  if it is correct it will dispatch a new Event named EventLogin that is rendered as XML.   
+	  **/
+    		
+    		private function loginAccountResultHandler(event:ResultEvent):void {
+                  
+                   var result:Object = event.result;
+           
+            if (result == "badlogin") {Alert.show("The credentials you have entered are either corrupt or you have yet to register.","Login Error");
+            
+            } else {
+            	
+                dispatchEvent(new EventLogin(XML(result)));
+            
+            }
+         }
+    		
+    	]]>
+    </mx:Script>
+    
+    
+    
+    <mx:HTTPService id="svcAccountLogin" url="/session.xml" resultFormat="e4x" method="POST" result="loginAccountResultHandler(event)"/>
+    
+    
+<mx:Form labelWidth="150">
+
+<mx:FormItem required="true" label="Username">
+
+<mx:TextInput id="loginInput"/>
+
+</mx:FormItem>
+<mx:FormItem required="true" label="Password">
+
+<mx:TextInput id="passwordInput" displayAsPassword="true"/>
+
+</mx:FormItem>
+
+<mx:FormItem>
+
+<mx:Button id="loginBtn" label="Login" click="login()"/>
+
+</mx:FormItem>
+
+</mx:Form>
+
+</mx:VBox>

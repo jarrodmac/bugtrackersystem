@@ -1,0 +1,31 @@
+<h1>New project</h1>
+
+<%= error_messages_for :project %>
+
+<% form_for(@project) do |f| %>
+  <p>
+    <b>User</b><br />
+    <%= f.text_field :user_id %>
+  </p>
+
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <b>Details</b><br />
+    <%= f.text_area :details %>
+  </p>
+
+  <p>
+    <b>Finished</b><br />
+    <%= f.check_box :finished %>
+  </p>
+
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', projects_path %>

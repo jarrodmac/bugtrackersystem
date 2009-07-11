@@ -1,0 +1,12 @@
+digraph models_diagram {
+	graph[overlap=false, splines=true]
+	"Bug" [shape=Mrecord, label="{Bug|name :string\ldetails :text\lnext_release :boolean\lfinished :boolean\lcreated_at :datetime\lupdated_at :datetime\l}"]
+	"Project" [shape=Mrecord, label="{Project|name :string\ldetails :text\lfinished :boolean\lcreated_at :datetime\lupdated_at :datetime\l}"]
+	"Repository" [shape=Mrecord, label="{Repository|name :string\ldetails :text\lcreated_at :datetime\lupdated_at :datetime\l}"]
+	"User" [shape=Mrecord, label="{User|login :string\lemail :string\lfirst_name :string\llast_name :string\lcrypted_password :string\lsalt :string\lcreated_at :datetime\lupdated_at :datetime\lremember_token :string\lremember_token_expires_at :datetime\l}"]
+	"Project" -> "Bug" [arrowtail=crow, arrowhead=dot, dir=both]
+	"Repository" -> "Bug" [arrowtail=crow, arrowhead=dot, dir=both]
+	"User" -> "Repository" [arrowtail=crow, arrowhead=dot, dir=both]
+	"User" -> "Project" [arrowtail=crow, arrowhead=dot, dir=both]
+	"User" -> "Bug" [arrowtail=crow, arrowhead=dot, dir=both]
+}
