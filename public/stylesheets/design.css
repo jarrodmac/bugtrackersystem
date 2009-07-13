@@ -35,6 +35,18 @@ color: yellow;
 
 }
 
+#products-top-section-2 {
+background-color: yellow;
+color: yellow;
+width: 25%;
+}
+
+#products-top-section-1 {
+background-color: yellow;
+color: green;
+width: 50%;
+}
+
 #products-bottom-section-1 {
 background-color: yellow;
 color: yellow;
@@ -44,7 +56,7 @@ width: 25%;
 #products-bottom-section-2 {
 background-color: yellow;
 color: green;
-width: 50%;
+width: 100%;
 }
 
 
